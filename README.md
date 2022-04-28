@@ -1,8 +1,7 @@
 # STARTER-team02
 
-TODO: Add a link to the deployed Heroku app for your team here, e.g.
-
-- <https://s22-7pm-3-team02.herokuapp.com>
+- Team production deployment: <https://s22-6pm-4-team02.herokuapp.com/>
+- Team qa deployment: <https://s22-6pm-4-team02-qa.herokuapp.com/>
 
 # CodeCov Badge
 
