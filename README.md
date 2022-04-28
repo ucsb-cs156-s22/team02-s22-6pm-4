@@ -90,3 +90,5 @@ On Heroku:
 * More info and instructions for access the SQL prompt are at [docs/postgres-database.md](/docs/postgres-database.md)
 
 :)
+
+:(
