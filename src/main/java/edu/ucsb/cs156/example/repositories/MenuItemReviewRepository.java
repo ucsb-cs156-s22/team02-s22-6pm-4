@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface MenuItemReviewRepository extends CrudRepository<MenuItemReview, String> {
+public interface MenuItemReviewRepository extends CrudRepository<MenuItemReview, Long> {
  
 }
