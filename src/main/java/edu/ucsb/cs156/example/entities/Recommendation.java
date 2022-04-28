@@ -1,6 +1,6 @@
 package edu.ucsb.cs156.example.entities;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +25,7 @@ public class Recommendation {
     private String requesterEmail;
     private String professorEmail;
     private String explanation;
-    private LocalDateTime dateRequested;
-    private LocalDateTime dateNeeded;
+    private LocalDate dateRequested;
+    private LocalDate dateNeeded;
     private boolean done;
 }
