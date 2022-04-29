@@ -1,3 +1,4 @@
+// hehe
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.repositories.UserRepository;
@@ -39,112 +40,233 @@ public class RecommendationControllerTests extends ControllerTestCase {
     RecommendationRepository recommendationRepository;
 
     @MockBean
-    Recommendation recommendation;
+    UserRepository userRepository;
 
     // Authorization tests for /api/Recommendation/admin/all
 
-    // @Test
-    // public void logged_out_users_cannot_get_all() throws Exception {
-    //     mockMvc.perform(get("/api/Recommendation/all")).andExpect(status().is(403)); // logged out users can't get all
-    // }
+    @Test
+    public void logged_out_users_cannot_get_all() throws Exception {
+        mockMvc.perform(get("/api/Recommendation/all")).andExpect(status().is(403)); // logged out users can't get all
+    }
 
-    // @WithMockUser(roles = { "USER" })
-    // @Test
-    // public void logged_in_users_can_get_all() throws Exception {
-    //         mockMvc.perform(get("/api/Recommendation/all"))
-    //                         .andExpect(status().is(200)); // logged
-    // }
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void logged_in_users_can_get_all() throws Exception {
+        mockMvc.perform(get("/api/Recommendation/all")).andExpect(status().is(200)); // logged
+    }
+
+    @Test
+    public void logged_out_users_cannot_get_by_id() throws Exception {
+        mockMvc.perform(get("/api/Recommendation?id=123")).andExpect(status().is(403)); // logged out users can't get by id
+    }
 
     // Authorization tests for /api/Recommendation/post
-    // (Perhaps should also have these for put and delete)
+    
+    @Test
+    public void logged_out_users_cannot_post() throws Exception {
+        mockMvc.perform(post("/api/Recommendation/post")).andExpect(status().is(403));
+    }
+    
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void logged_in_regular_users_cannot_post() throws Exception {
+        mockMvc.perform(post("/api/Recommendation/post")).andExpect(status().is(403)); // only admins can post
+    }
 
-    // @Test
-    // public void logged_out_users_cannot_post() throws Exception {
-    //         mockMvc.perform(post("/api/Recommendation/post"))
-    //                         .andExpect(status().is(403));
-    // }
+    // Authorization tests for /api/Recommendation/delete
+    
+    @Test
+    public void logged_out_users_cannot_delete() throws Exception {
+            mockMvc.perform(delete("/api/Recommendation?id=123"))
+                            .andExpect(status().is(403));
+    }
 
-    // @WithMockUser(roles = { "USER" })
-    // @Test
-    // public void logged_in_regular_users_cannot_post() throws Exception {
-    //         mockMvc.perform(post("/api/Recommendation/post"))
-    //                         .andExpect(status().is(403)); // only admins can post
-    // }
-    // @WithMockUser(roles = { "USER" })
-    // @Test
-    // public void logged_in_user_can_get_all_Recommendation() throws Exception {
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void logged_in_regular_users_cannot_delete() throws Exception {
+            mockMvc.perform(post("/api/Recommendation?id=123"))
+                            .andExpect(status().is(403)); // only admins can delete
+    }
 
-    //         // arrange
-    //         LocalDate ldt1 = LocalDate.parse("2022-04-20");
-    //         LocalDate ldt2 = LocalDate.parse("2022-05-01");
+    // Tests with mocks for database actions
 
-    //         Recommendation recommendation1 = Recommendation.builder()
-    //             .requesterEmail("cgaucho@ucsb.edu")
-    //             .professorEmail("phtcon@ucsb.edu")
-    //             .explanation("BS/MS program")
-    //             .dateRequested(ldt1)
-    //             .dateNeeded(ldt2)
-    //             .done(false)
-    //             .build();
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+        // arrange
+        LocalDate ldt1 = LocalDate.parse("2022-05-01");
+        LocalDate ldt2 = LocalDate.parse("2022-04-20");
 
-    //         LocalDate ldt3 = LocalDate.parse("2022-05-20");
-    //         LocalDate ldt4 = LocalDate.parse("2022-11-15");
+        Recommendation recommendation = Recommendation.builder()
+            .requesterEmail("cgaucho@ucsb.edu")
+            .professorEmail("phtcon@ucsb.edu")
+            .explanation("BS/MS program")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt2)
+            .done(false)
+            .build();
 
-    //         Recommendation recommendation2 = Recommendation.builder()
-    //             .requesterEmail("ldelplaya@ucsb.edu")
-    //             .professorEmail("richert@ucsb.edu")
-    //             .explanation("PhD CS Stanford")
-    //             .dateRequested(ldt3)
-    //             .dateNeeded(ldt4)
-    //             .done(false)
-    //             .build();
+        when(recommendationRepository.findById(eq(123L))).thenReturn(Optional.of(recommendation));
 
-    //         ArrayList<Recommendation> expectedDates = new ArrayList<>();
-    //         expectedDates.addAll(Arrays.asList(recommendation1, recommendation2));
+        // act
+        MvcResult response = mockMvc.perform(get("/api/Recommendation?id=123"))
+                        .andExpect(status().isOk()).andReturn();
 
-    //         when(recommendationRepository.findAll()).thenReturn(expectedDates);
+        // assert
 
-    //         // act
-    //         MvcResult response = mockMvc.perform(get("/api/Recommendation/all"))
-    //                         .andExpect(status().isOk()).andReturn();
+        verify(recommendationRepository, times(1)).findById(eq(123L));
+        String expectedJson = mapper.writeValueAsString(recommendation);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
 
-    //         // assert
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+        // arrange
 
-    //         verify(recommendationRepository, times(1)).findAll();
-    //         String expectedJson = mapper.writeValueAsString(expectedDates);
-    //         String responseString = response.getResponse().getContentAsString();
-    //         assertEquals(expectedJson, responseString);
-    // }
+        when(recommendationRepository.findById(eq(123L))).thenReturn(Optional.empty());
 
-    // @WithMockUser(roles = { "ADMIN", "USER" })
-    // @Test
-    // public void an_admin_user_can_post_a_new_ucsbdate() throws Exception {
-    //         // arrange
+        // act
+        MvcResult response = mockMvc.perform(get("/api/Recommendation?id=123"))
+                        .andExpect(status().isNotFound()).andReturn();
 
-    //         LocalDate ldt1 = LocalDate.parse("2022-04-20");
-    //         LocalDate ldt2 = LocalDate.parse("2022-05-01");
+        // assert
 
-    //         Recommendation recommendation1 = Recommendation.builder()
-    //                         .requesterEmail("cgaucho@ucsb.edu")
-    //                         .professorEmail("phtcon@ucsb.edu")
-    //                         .explanation("BS/MS program")
-    //                         .dateRequested(ldt1)
-    //                         .dateNeeded(ldt2)
-    //                         .done(false)
-    //                         .build();
+        verify(recommendationRepository, times(1)).findById(eq(123L));
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("EntityNotFoundException", json.get("type"));
+        assertEquals("Recommendation with id 123 not found", json.get("message"));
+    }
 
-    //         when(recommendationRepository.save(eq(recommendation1))).thenReturn(recommendation1);
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void logged_in_user_can_get_all_recommendations() throws Exception {
 
-    //         // act
-    //         MvcResult response = mockMvc.perform(
-    //                         post("/api/Recommendation/post?requesterEmail=cgaucho@ucsb.edu&professorEmail=phtcon@ucsb.edu&explanation=BS/MS%20program&dateRequested=2022-04-20&dateNeeded=2022-05-01&done=false")
-    //                                         .with(csrf()))
-    //                         .andExpect(status().isOk()).andReturn();
+        // arrange
+        LocalDate ldt1 = LocalDate.parse("2022-05-01");
+        LocalDate ldt2 = LocalDate.parse("2022-04-20");
 
-    //         // assert
-    //         verify(recommendationRepository, times(1)).save(recommendation1);
-    //         String expectedJson = mapper.writeValueAsString(recommendation1);
-    //         String responseString = response.getResponse().getContentAsString();
-    //         assertEquals(expectedJson, responseString);
-    // }
+        Recommendation recommendation1 = Recommendation.builder()
+            .requesterEmail("cgaucho@ucsb.edu")
+            .professorEmail("phtcon@ucsb.edu")
+            .explanation("BS/MS program")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt2)
+            .done(false)
+            .build();
+
+        LocalDate ldt4 = LocalDate.parse("2022-11-15");
+        LocalDate ldt3 = LocalDate.parse("2022-05-20");
+
+        Recommendation recommendation2 = Recommendation.builder()
+            .requesterEmail("ldelplaya@ucsb.edu")
+            .professorEmail("richert@ucsb.edu")
+            .explanation("PhD CS Stanford")
+            .dateRequested(ldt3)
+            .dateNeeded(ldt4)
+            .done(false)
+            .build();
+
+        ArrayList<Recommendation> expectedDates = new ArrayList<>();
+        expectedDates.addAll(Arrays.asList(recommendation1, recommendation2));
+
+        when(recommendationRepository.findAll()).thenReturn(expectedDates);
+
+        // act
+        MvcResult response = mockMvc.perform(get("/api/Recommendation/all"))
+                        .andExpect(status().isOk()).andReturn();
+
+        // assert
+
+        verify(recommendationRepository, times(1)).findAll();
+        String expectedJson = mapper.writeValueAsString(expectedDates);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void an_admin_user_can_post_a_new_recommendation() throws Exception {
+            // arrange
+
+            LocalDate ldt1 = LocalDate.parse("2022-04-20");
+            LocalDate ldt2 = LocalDate.parse("2022-05-01");
+
+            Recommendation recommendation1 = Recommendation.builder()
+                            .requesterEmail("cgaucho@ucsb.edu")
+                            .professorEmail("phtcon@ucsb.edu")
+                            .explanation("BS/MS program")
+                            .dateRequested(ldt1)
+                            .dateNeeded(ldt2)
+                            .done(false)
+                            .build();
+
+            when(recommendationRepository.save(eq(recommendation1))).thenReturn(recommendation1);
+
+            // act
+            MvcResult response = mockMvc.perform(
+                            post("/api/Recommendation/post?requesterEmail=cgaucho@ucsb.edu&professorEmail=phtcon@ucsb.edu&explanation=BS/MS program&dateRequested=2022-04-20&dateNeeded=2022-05-01&done=false")
+                                            .with(csrf()))
+                            .andExpect(status().isOk()).andReturn();
+
+            // assert
+            verify(recommendationRepository, times(1)).save(recommendation1);
+            String expectedJson = mapper.writeValueAsString(recommendation1);
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_can_delete_a_recommendation() throws Exception {
+            // arrange
+
+            LocalDate ldt1 = LocalDate.parse("2022-04-20");
+            LocalDate ldt2 = LocalDate.parse("2022-05-01");
+
+            Recommendation recommendation1 = Recommendation.builder()
+                            .requesterEmail("cgaucho@ucsb.edu")
+                            .professorEmail("phtcon@ucsb.edu")
+                            .explanation("BS/MS program")
+                            .dateRequested(ldt1)
+                            .dateNeeded(ldt2)
+                            .done(false)
+                            .build();
+
+            when(recommendationRepository.findById(eq(123L))).thenReturn(Optional.of(recommendation1));
+
+            // act
+            MvcResult response = mockMvc.perform(
+                            delete("/api/Recommendation?id=123")
+                                            .with(csrf()))
+                            .andExpect(status().isOk()).andReturn();
+
+            // assert
+            verify(recommendationRepository, times(1)).findById(123L);
+            verify(recommendationRepository, times(1)).delete(any());
+
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("Recommendation with id 123 deleted", json.get("message"));
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_tries_to_delete_non_existant_recommendation_and_gets_right_error_message()
+                    throws Exception {
+            // arrange
+
+            when(recommendationRepository.findById(eq(123L))).thenReturn(Optional.empty());
+
+            // act
+            MvcResult response = mockMvc.perform(
+                            delete("/api/Recommendation?id=123")
+                                            .with(csrf()))
+                            .andExpect(status().isNotFound()).andReturn();
+
+            // assert
+            verify(recommendationRepository, times(1)).findById(123L);
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("Recommendation with id 123 not found", json.get("message"));
+    }
 }
