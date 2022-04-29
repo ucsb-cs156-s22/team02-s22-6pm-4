@@ -1,6 +1,8 @@
 package edu.ucsb.cs156.example.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Data;
@@ -20,9 +22,4 @@ public class UCSBDiningCommonsMenuItem {
   private String diningCommonsCode;
   private String name;
   private String station;
-//   private boolean hasSackMeal;
-//   private boolean hasTakeOutMeal;
-//   private boolean hasDiningCam;
-//   private Double latitude;
-//   private Double longitude;
 }
