@@ -1,6 +1,6 @@
 package edu.ucsb.cs156.example.entities;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.GenerationType;
@@ -24,7 +24,7 @@ public class MenuItemReview {
 
   private Long itemId;
   private String reviewerEmail;
-  private int stars;  
-  private LocalDateTime dateReviewed;
+  private int stars;
+  private LocalDate dateReviewed;
   private String comments;
 }
