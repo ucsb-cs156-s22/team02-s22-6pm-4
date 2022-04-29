@@ -1,4 +1,3 @@
-// hehe
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.repositories.UserRepository;
@@ -268,5 +267,90 @@ public class RecommendationControllerTests extends ControllerTestCase {
             verify(recommendationRepository, times(1)).findById(123L);
             Map<String, Object> json = responseToJson(response);
             assertEquals("Recommendation with id 123 not found", json.get("message"));
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+            // arrange
+
+            LocalDate ldt1 = LocalDate.parse("2022-04-20");
+            LocalDate ldt2 = LocalDate.parse("2022-05-01");
+            LocalDate ldt3 = LocalDate.parse("2022-01-03");
+            LocalDate ldt4 = LocalDate.parse("2022-09-09");
+
+            Recommendation recommendationOrig = Recommendation.builder()
+                            .requesterEmail("cgaucho@ucsb.edu")
+                            .professorEmail("phtcon@ucsb.edu")
+                            .explanation("BS/MS program")
+                            .dateRequested(ldt1)
+                            .dateNeeded(ldt2)
+                            .done(false)
+                            .build();
+
+            Recommendation recommendationEdited = Recommendation.builder()
+                            .requesterEmail("req@ucsb.edu")
+                            .professorEmail("prof@ucsb.edu")
+                            .explanation("explanation !!! explanation")
+                            .dateRequested(ldt3)
+                            .dateNeeded(ldt4)
+                            .done(false)
+                            .build();
+
+            String requestBody = mapper.writeValueAsString(recommendationEdited);
+
+            when(recommendationRepository.findById(eq(123L))).thenReturn(Optional.of(recommendationOrig));
+
+            // act
+            MvcResult response = mockMvc.perform(
+                            put("/api/Recommendation?id=123")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .characterEncoding("utf-8")
+                                            .content(requestBody)
+                                            .with(csrf()))
+                            .andExpect(status().isOk()).andReturn();
+
+            // assert
+            verify(recommendationRepository, times(1)).findById(123L);
+            verify(recommendationRepository, times(1)).save(recommendationEdited); // should be saved with correct user
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(requestBody, responseString);
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+            // arrange
+
+            LocalDate ldt1 = LocalDate.parse("2022-04-20");
+            LocalDate ldt2 = LocalDate.parse("2022-05-01");
+
+            Recommendation editedRecommendation = Recommendation.builder()
+                            .requesterEmail("cgaucho@ucsb.edu")
+                            .professorEmail("phtcon@ucsb.edu")
+                            .explanation("BS/MS program")
+                            .dateRequested(ldt1)
+                            .dateNeeded(ldt2)
+                            .done(false)
+                            .build();
+
+            String requestBody = mapper.writeValueAsString(editedRecommendation);
+
+            when(recommendationRepository.findById(eq(123L))).thenReturn(Optional.empty());
+
+            // act
+            MvcResult response = mockMvc.perform(
+                            put("/api/Recommendation?id=123")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .characterEncoding("utf-8")
+                                            .content(requestBody)
+                                            .with(csrf()))
+                            .andExpect(status().isNotFound()).andReturn();
+
+            // assert
+            verify(recommendationRepository, times(1)).findById(123L);
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("Recommendation with id 123 not found", json.get("message"));
+
     }
 }
