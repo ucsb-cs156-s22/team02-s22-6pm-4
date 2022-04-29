@@ -1,8 +1,7 @@
 # STARTER-team02
 
-TODO: Add a link to the deployed Heroku app for your team here, e.g.
-
-- <https://s22-7pm-3-team02.herokuapp.com>
+- Team production deployment: <https://s22-6pm-4-team02.herokuapp.com/>
+- Team qa deployment: <https://s22-6pm-4-team02-qa.herokuapp.com/>
 
 # CodeCov Badge
 
@@ -86,9 +85,10 @@ On localhost:
 - For more info, see [docs/h2-database.md](/docs/h2-database.md)
 
 On Heroku:
-
-- The SQL database is a postgres database provisioned automatically by Heroku
-- You can reset it with `heroku pg:reset --app app-name-goes-here`
-- More info and instructions for access the SQL prompt are at [docs/postgres-database.md](/docs/postgres-database.md)
+* The SQL database is a postgres database provisioned automatically by Heroku
+* You can reset it with `heroku pg:reset --app app-name-goes-here`
+* More info and instructions for access the SQL prompt are at [docs/postgres-database.md](/docs/postgres-database.md)
 
 :)
+
+:(
