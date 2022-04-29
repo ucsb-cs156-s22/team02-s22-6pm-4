@@ -122,7 +122,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
                 verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq(123L));
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("EntityNotFoundException", json.get("type"));
-                assertEquals("Recommendation with id 123 not found", json.get("message"));
+                assertEquals("UCSBDiningCommonsMenuItem with id 123 not found", json.get("message"));
         }
 
         @WithMockUser(roles = { "USER" })
@@ -175,7 +175,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/UCSBDiningCommonsMenuItem/post?name=Ortega&diningCommonsCode=Baked Pesto Pasta with Chicken&station=Entree Specials")
+                                post("/api/UCSBDiningCommonsMenuItem/post?name=ortega&diningCommonsCode=Baked Pesto Pasta with Chicken&station=Entree Specials")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
