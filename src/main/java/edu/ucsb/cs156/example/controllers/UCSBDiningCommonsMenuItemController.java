@@ -34,82 +34,72 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
     @ApiOperation(value = "List all ucsb dining commons menu items")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
-    public Iterable<UCSBDiningCommonsMenuItem> allCommonss() {
+    public Iterable<UCSBDiningCommonsMenuItem> allCommons() {
         Iterable<UCSBDiningCommonsMenuItem> menuItems = ucsbDiningCommonsMenuItemRepository.findAll();
         return menuItems;
     }
 
-//     @ApiOperation(value = "Get a single menu item")
-//     @PreAuthorize("hasRole('ROLE_USER')")
-//     @GetMapping("")
-//     public UCSBDiningCommonsMenuItem getById(
-//             @ApiParam("code") @RequestParam String code) {
-//         UCSBDiningCommons commons = ucsbDiningCommonsRepository.findById(code)
-//                 .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommons.class, code));
+    @ApiOperation(value = "Get a single menu item")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public UCSBDiningCommonsMenuItuestParam String diningCommonsCode) {
+        UCSBDiningCommons diningCommonsCode = ucsbDiningCommonsRepository.findById(diningCommonsCode)
+                .orElseThrow(() em getById(
+            @ApiParam("diningCommonsCode") @Req-> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, diningCommonsCode));
 
-//         return commons;
-//     }
+        return diningCommonsCode;
+    }
 
-//     @ApiOperation(value = "Create a new commons")
-//     @PreAuthorize("hasRole('ROLE_ADMIN')")
-//     @PostMapping("/post")
-//     public UCSBDiningCommons postCommons(
-//         @ApiParam("code") @RequestParam String code,
-//         @ApiParam("name") @RequestParam String name,
-//         @ApiParam("hasSackMeal") @RequestParam boolean hasSackMeal,
-//         @ApiParam("hasTakeOutMeal") @RequestParam boolean hasTakeOutMeal,
-//         @ApiParam("hasDiningCam") @RequestParam boolean hasDiningCam,
-//         @ApiParam("latitude") @RequestParam double latitude,
-//         @ApiParam("longitude") @RequestParam double longitude
-//         )
-//         {
+    @ApiOperation(value = "Create a new menu item")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/post")
+    public UCSBDiningCommonsMenuItem postMenuItem(
+        @ApiParam("diningCommonsCode") @RequestParam String diningCommonsCode,
+        @ApiParam("name") @RequestParam String name,
+        @ApiParam("station") @RequestParam Strin station
+        )
+        {
 
-//         UCSBDiningCommons commons = new UCSBDiningCommons();
-//         commons.setCode(code);
-//         commons.setName(name);
-//         commons.setHasSackMeal(hasSackMeal);
-//         commons.setHasTakeOutMeal(hasTakeOutMeal);
-//         commons.setHasDiningCam(hasDiningCam);
-//         commons.setLatitude(latitude);
-//         commons.setLongitude(longitude);
+        UCSBDiningCommonsMenuItem menuItems = new UCSBDiningCommonsMenuItem();
+        menuItems.setCode(diningCommonsCode);
+        menuItems.setName(name);
+        menuItem.setStation(station);
 
-//         UCSBDiningCommons savedCommons = ucsbDiningCommonsRepository.save(commons);
+        UCSBDiningCommonsMenuItem savedMenuItems = ucsbDiningCommonsMenuItemRepository.save(menuItems);
 
-//         return savedCommons;
-//     }
+        return savedMenuItems;
+    }
 
-//     @ApiOperation(value = "Delete a UCSBDiningCommons")
-//     @PreAuthorize("hasRole('ROLE_ADMIN')")
-//     @DeleteMapping("")
-//     public Object deleteCommons(
-//             @ApiParam("code") @RequestParam String code) {
-//         UCSBDiningCommons commons = ucsbDiningCommonsRepository.findById(code)
-//                 .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommons.class, code));
+    @ApiOperation(value = "Delete a UCSBDiningCommonsMenuItem")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteCommons(
+            @ApiParam("id") @RequestParam Long id) {
+        UCSBDiningCommonsMenuItem menuItem = ucsbDiningCommonsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));
 
-//         ucsbDiningCommonsRepository.delete(commons);
-//         return genericMessage("UCSBDiningCommons with id %s deleted".formatted(code));
-//     }
+        ucsbDiningCommonsRepository.delete(menuItem);
+        return genericMessage("UCSBDiningCommonsMenuItem with id %s deleted".formatted(id));
+    }
 
-//     @ApiOperation(value = "Update a single commons")
-//     @PreAuthorize("hasRole('ROLE_ADMIN')")
-//     @PutMapping("")
-//     public UCSBDiningCommons updateCommons(
-//             @ApiParam("code") @RequestParam String code,
-//             @RequestBody @Valid UCSBDiningCommons incoming) {
+    @ApiOperation(value = "Update a single menu item")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public UCSBDiningCommonsMenuItem updateMenuItem(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid UCSBDiningCommonsMenuItem incoming) {
 
-//         UCSBDiningCommons commons = ucsbDiningCommonsRepository.findById(code)
-//                 .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommons.class, code));
+        UCSBDiningCommonsMenuItem menuItem = ucsbDiningCommonsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));
 
 
-//         commons.setName(incoming.getName());  
-//         commons.setHasSackMeal(incoming.getHasSackMeal());
-//         commons.setHasTakeOutMeal(incoming.getHasTakeOutMeal());
-//         commons.setHasDiningCam(incoming.getHasDiningCam());
-//         commons.setLatitude(incoming.getLatitude());
-//         commons.setLongitude(incoming.getLongitude());
+        menuItem.setName(incoming.getName());  
+        menuITem.setStation(incoming.getStation());
+        menuItem.setCode(incoming.getCode());
+     
 
-//         ucsbDiningCommonsRepository.save(commons);
+        ucsbDiningCommonsMenuItemRepository.save(menuItem);
 
-//         return commons;
-//     }
-// }
+        return menuItem;
+    }
+}
