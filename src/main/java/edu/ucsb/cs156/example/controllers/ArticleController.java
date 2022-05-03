@@ -85,7 +85,7 @@ public class ArticleController extends ApiController {
     @ApiOperation(value = "Delete an Article")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
-    public Object deleteUCSBDate(
+    public Object deleteArticle(
             @ApiParam("id") @RequestParam Long id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Article.class, id));
@@ -97,7 +97,7 @@ public class ArticleController extends ApiController {
     @ApiOperation(value = "Update a single article")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")
-    public Article updateUCSBDate(
+    public Article updateArticle(
             @ApiParam("id") @RequestParam Long id,
             @RequestBody @Valid Article incoming) {
 
