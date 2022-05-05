@@ -164,7 +164,7 @@ public class RecommendationControllerTests extends ControllerTestCase {
             .explanation("PhD CS Stanford")
             .dateRequested(ldt3)
             .dateNeeded(ldt4)
-            .done(false)
+            .done(true)
             .build();
 
         ArrayList<Recommendation> expectedDates = new ArrayList<>();
@@ -198,14 +198,14 @@ public class RecommendationControllerTests extends ControllerTestCase {
                             .explanation("BS/MS program")
                             .dateRequested(ldt1)
                             .dateNeeded(ldt2)
-                            .done(false)
+                            .done(true)
                             .build();
 
             when(recommendationRepository.save(eq(recommendation1))).thenReturn(recommendation1);
 
             // act
             MvcResult response = mockMvc.perform(
-                            post("/api/Recommendation/post?requesterEmail=cgaucho@ucsb.edu&professorEmail=phtcon@ucsb.edu&explanation=BS/MS program&dateRequested=2022-04-20&dateNeeded=2022-05-01&done=false")
+                            post("/api/Recommendation/post?requesterEmail=cgaucho@ucsb.edu&professorEmail=phtcon@ucsb.edu&explanation=BS/MS program&dateRequested=2022-04-20&dateNeeded=2022-05-01&done=true")
                                             .with(csrf()))
                             .andExpect(status().isOk()).andReturn();
 
@@ -230,7 +230,7 @@ public class RecommendationControllerTests extends ControllerTestCase {
                             .explanation("BS/MS program")
                             .dateRequested(ldt1)
                             .dateNeeded(ldt2)
-                            .done(false)
+                            .done(true)
                             .build();
 
             when(recommendationRepository.findById(eq(123L))).thenReturn(Optional.of(recommendation1));
@@ -294,7 +294,7 @@ public class RecommendationControllerTests extends ControllerTestCase {
                             .explanation("explanation !!! explanation")
                             .dateRequested(ldt3)
                             .dateNeeded(ldt4)
-                            .done(false)
+                            .done(true)
                             .build();
 
             String requestBody = mapper.writeValueAsString(recommendationEdited);
